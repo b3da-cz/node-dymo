@@ -2,6 +2,8 @@
 
 node-dymo is a Node.js wrapper that reads from a Dymo brand USB scale.  The wrapper provides several events as well as methods to read measurements from the scale.
 
+> for use with Dymo S50
+
 ## Dependencies
 
 Libusb is included as a submodule. On Linux, you'll need libudev to build libusb. On Ubuntu/Debian: `sudo apt-get install build-essential libudev-dev`
@@ -12,6 +14,9 @@ Use [Zadig](http://sourceforge.net/projects/libwdi/files/zadig/) to install the 
 ## Quick Examples
 
 ```js
+const dymo = require('node-dymo')
+dymo.init()
+
 dymo.on('online', function() {
   console.log('scale was connected/powered on'); // ## ounces(/grams);
 });
@@ -27,10 +32,10 @@ console.log(dymo.getWeight()); // { value: 10, system: 'grams' }
 
 node-dymo provides three methods you can call at any time:
 
-* `connect()` Connect to the driver, and if a scale isn't immediately online, establish listeners until it becomes online.  This method is required in order to gain access to the below methods and listeners
+* `init(productId = null)` Connect to the driver, and if a scale isn't immediately online, establish listeners until it becomes online.  This method is required in order to gain access to the below methods and listeners. You can supply `productId` for direct connection to deserved device
 * `getWeight()` Get the current weight on the scale. Returns an object containing the properties `value`, and `system`, with the numerical weight and either `ounces` or `grams` respectively
-* `getOverweightStatus()` In the event the scale is overweight, this method will return `true`, otherwise `false`
-* `getStatus()` returns either `true` or `false` if a scale is available or not.
+* `isScaleOverweight()` In the event the scale is overweight, this method will return `true`, otherwise `false`
+* `isScaleReady()` returns either `true` or `false` if a scale is available or not.
 
 ## Events
 

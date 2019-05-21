@@ -1,23 +1,31 @@
 {
   "name": "node-dymo",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Node.js wrapper for Dymo scales",
-  "main": "scale.js",
+  "main": "index.js",
   "scripts": {
+    "build": "sh ./scripts/build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sjmiller85/node-dymo.git"
+    "url": "https://github.com/b3da-cz/node-dymo.git"
   },
   "author": "Scott Miller",
   "license": "ISC",
+  "contributors": [
+    "Tomas Beran <b3da@b3da.net> (http://b3da.net)"
+  ],
   "bugs": {
-    "url": "https://github.com/sjmiller85/node-dymo/issues"
+    "url": "https://github.com/b3da-cz/node-dymo/issues"
   },
-  "homepage": "https://github.com/sjmiller85/node-dymo",
+  "homepage": "https://github.com/b3da-cz/node-dymo",
   "dependencies": {
+    "@types/node": "^12.0.2",
     "async": "^1.5.0",
-    "usb": "^1.0.6"
+    "usb": "~1.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.5"
   }
 }

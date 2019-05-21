@@ -1,8 +1,8 @@
+import { EventEmitter } from 'events'
 const usb = require('usb')
-const EventEmitter = require('events').EventEmitter
 
 
-const selectors = {
+const selectors: any = {
   isScaleIdle: dataArr => dataArr[1] === 2,
   isScaleWeighting: dataArr => dataArr[1] === 3,
   isScaleReady: dataArr => dataArr[1] === 4,
@@ -12,24 +12,22 @@ const selectors = {
 }
 
 
-const NODE_DYMO_VENDOR_ID = 2338
-const NODE_DYMO_SYSTEM = {
+const NODE_DYMO_VENDOR_ID: number = 2338
+export const NODE_DYMO_SYSTEM: any = {
   GRAMS: 'grams',
   OUNCES: 'ounces',
 }
 
-class NodeDymo {
-  constructor() {
-    this.isReady = false
-    this.weight = {
-      value: 0,
-      isOverweight: false,
-      system: NODE_DYMO_SYSTEM.GRAMS,
-    }
-    this.emitter = new EventEmitter()
+export default class NodeDymo {
+  protected isReady: boolean = false
+  protected weight: any = {
+    value: 0,
+    isOverweight: false,
+    system: NODE_DYMO_SYSTEM.GRAMS,
   }
+  protected emitter: EventEmitter = new EventEmitter()
 
-  init(productId = null) {
+  init(productId: string = null) {
     this.listenForScaleConnectionEvents()
     this.findScale(productId).then(foundDevice => {
       return this.connectScale(foundDevice)
@@ -41,7 +39,7 @@ class NodeDymo {
     })
   }
 
-  on(event, callback) {
+  on(event: string, callback: Function|any): void {
     this.emitter.on(event, callback)
   }
 
@@ -57,7 +55,7 @@ class NodeDymo {
     return this.weight.isOverweight
   }
 
-  listenForScaleConnectionEvents() {
+  protected listenForScaleConnectionEvents() {
     usb.on('attach', device => {
       if (device.deviceDescriptor.idVendor === NODE_DYMO_VENDOR_ID) {
         this.init(device.deviceDescriptor.idProduct)
@@ -72,7 +70,7 @@ class NodeDymo {
     })
   }
 
-  findScale(productId = null) {
+  protected findScale(productId: string = null): Promise<any> {
     return new Promise((resolve, reject) => {
       let allUsbDevices = []
       const dymoUsbDevices = []
@@ -96,7 +94,7 @@ class NodeDymo {
     })
   }
 
-  connectScale(device) {
+  protected connectScale(device): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
         device.open()
@@ -113,7 +111,7 @@ class NodeDymo {
     })
   }
 
-  listenToScaleUpdates(device) {
+  protected listenToScaleUpdates(device) {
     device.interface(0).endpoint(130).startPoll(3, 6)
     this.isReady = true
 
@@ -131,9 +129,10 @@ class NodeDymo {
     device.interface(0).endpoint(130).on('data', data => {
       const buffer = data.toJSON()
       const dataArr = Object.keys(buffer).includes('data') ? buffer.data : buffer
-      let isOverweight = false
-      let value  = 0
-      let system = NODE_DYMO_SYSTEM.GRAMS
+      let isOverweight: boolean = false
+      let value: number = 0
+      let system: string = NODE_DYMO_SYSTEM.GRAMS
+
       if (selectors.isScaleIdle(dataArr)) {
         isOverweight = false
         value = 0
@@ -172,4 +171,3 @@ class NodeDymo {
   }
 }
 
-module.exports = new NodeDymo()
