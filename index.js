@@ -27,6 +27,7 @@ class NodeDymo {
       system: NODE_DYMO_SYSTEM.GRAMS,
     }
     this.emitter = new EventEmitter()
+    this.isScaleTypeSmall = false // productId == 32777 - big scale, 32771 - small scale
   }
 
   init(productId = null) {
@@ -105,6 +106,7 @@ class NodeDymo {
             device.interface(0).detachKernelDriver()
           }
           device.interface(0).claim()
+          this.isScaleTypeSmall = device.deviceDescriptor.idProduct === 32771
           return resolve(device)
         })
       } catch (e) {
@@ -147,10 +149,16 @@ class NodeDymo {
       if (selectors.isScaleReady(dataArr) && system === NODE_DYMO_SYSTEM.OUNCES) {
         isOverweight = false
         value = Math.round(((dataArr[4] + (dataArr[5] * 256)) * 0.1) * 100)
+        if (this.isScaleTypeSmall) {
+          value = value / 1000
+        }
       }
       if (selectors.isScaleReady(dataArr) && system === NODE_DYMO_SYSTEM.GRAMS) {
         isOverweight = false
         value = Math.round((dataArr[4] + dataArr[5] * 256) * 100)
+        if (this.isScaleTypeSmall) {
+          value = value / 100
+        }
       }
       if (selectors.isScaleOverweight(dataArr)) {
         isOverweight = true
