@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-const usb = require('usb')
+import { usb, findByIds, getDeviceList } from 'usb'
 
 
 const selectors: any = {
@@ -18,7 +18,7 @@ export const NODE_DYMO_SYSTEM: any = {
   OUNCES: 'ounces',
 }
 
-export default class NodeDymo {
+export class NodeDymo {
   protected isReady: boolean = false
   protected weight: any = {
     value: 0,
@@ -58,7 +58,7 @@ export default class NodeDymo {
   protected listenForScaleConnectionEvents() {
     usb.on('attach', device => {
       if (device.deviceDescriptor.idVendor === NODE_DYMO_VENDOR_ID) {
-        this.init(device.deviceDescriptor.idProduct)
+        this.init(String(device.deviceDescriptor.idProduct))
         this.emitter.emit('online')
       }
     })
@@ -74,10 +74,10 @@ export default class NodeDymo {
     return new Promise((resolve, reject) => {
       let allUsbDevices = []
       const dymoUsbDevices = []
-      if (!!productId && usb.findByIds(NODE_DYMO_VENDOR_ID, productId)) {
-        return resolve(usb.findByIds(NODE_DYMO_VENDOR_ID, productId))
+      if (!!productId && findByIds(NODE_DYMO_VENDOR_ID, Number(productId))) {
+        return resolve(findByIds(NODE_DYMO_VENDOR_ID, Number(productId)))
       } else {
-        allUsbDevices = usb.getDeviceList()
+        allUsbDevices = getDeviceList()
         for (let i = 0; i < allUsbDevices.length; i++) {
           if (allUsbDevices[i].deviceDescriptor.idVendor === NODE_DYMO_VENDOR_ID) {
             dymoUsbDevices.push(allUsbDevices[i])

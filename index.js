@@ -1,6 +1,5 @@
-const usb = require('usb')
-const EventEmitter = require('events').EventEmitter
-
+import { usb, findByIds, getDeviceList } from 'usb'
+import { EventEmitter} from 'events'
 
 const selectors = {
   isScaleIdle: dataArr => dataArr[1] === 2,
@@ -18,7 +17,7 @@ const NODE_DYMO_SYSTEM = {
   OUNCES: 'ounces',
 }
 
-class NodeDymo {
+export class NodeDymo {
   constructor() {
     this.isReady = false
     this.weight = {
@@ -77,10 +76,10 @@ class NodeDymo {
     return new Promise((resolve, reject) => {
       let allUsbDevices = []
       const dymoUsbDevices = []
-      if (!!productId && usb.findByIds(NODE_DYMO_VENDOR_ID, productId)) {
-        return resolve(usb.findByIds(NODE_DYMO_VENDOR_ID, productId))
+      if (!!productId && findByIds(NODE_DYMO_VENDOR_ID, productId)) {
+        return resolve(findByIds(NODE_DYMO_VENDOR_ID, productId))
       } else {
-        allUsbDevices = usb.getDeviceList()
+        allUsbDevices = getDeviceList()
         for (let i = 0; i < allUsbDevices.length; i++) {
           if (allUsbDevices[i].deviceDescriptor.idVendor === NODE_DYMO_VENDOR_ID) {
             dymoUsbDevices.push(allUsbDevices[i])
@@ -179,5 +178,3 @@ class NodeDymo {
     })
   }
 }
-
-module.exports = new NodeDymo()

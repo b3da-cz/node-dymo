@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "Node.js wrapper for Dymo scales",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "build": "sh ./scripts/build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,9 +24,9 @@
   "dependencies": {
     "@types/node": "^12.0.2",
     "async": "^1.5.0",
-    "usb": "~1.5.0"
+    "usb": "^2.14.0"
   },
   "devDependencies": {
-    "typescript": "^3.4.5"
+    "typescript": "5.7.2"
   }
 }
